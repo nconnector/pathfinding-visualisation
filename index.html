@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pathfinder</title>
+    <link rel="stylesheet" href="style.css" />   
+    <link rel="icon" sizes="any" type="image/svg+xml" href="images/favicon.svg"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  </head>
+  <body onload="populate()">
+      <div id="column-container">
+
+        <div class="column-block">
+          <h1>Pathfinder</h1>
+        </div>
+
+        <div class="column-block" style="display: none;">
+          <h2>Select your algorithm</h2>
+        </div>
+
+        <div class="column-block">
+          <div class="div-buttons">
+            <button id="startButtonAlgoRandom">Random</button>
+            <button id="startButtonAlgoAStar">A*</button>
+            <button id="startButtonAlgoAStarDots">A* vs dots</button>
+            <button id="startButtonAlgoAStarMaze">A* vs maze</button>
+            <button id="startButtonAlgo5">A* Eller's</button>
+          </div>
+        </div>
+
+        <div class="column-block" ondrop="">
+          <div id="the-grid">
+        </div>
+
+        <div class="column-block">
+          <span id="output">
+          </span>
+        </div>
+
+
+      </div>      
+    </div>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+</html>
