@@ -355,7 +355,7 @@ function algoBinaryTreeMaze(tiles){
 
 // 3. Recursive Division Maze
 function algoRecursiveMaze(tiles) {
-  let SMALLDELAY = 800/GRIDSIZE
+  let SMALLDELAY = 400/GRIDSIZE
   let roomSize = 3
   let rooms = [[1, GRIDSIZE-2, 1, GRIDSIZE-2]]
   let doorsX = [Array(GRIDSIZE-1).keys()]
@@ -392,18 +392,20 @@ function algoRecursiveMaze(tiles) {
       // vertical split if dX > dY
       if (x2-x1 >= roomSize && y2-y1 > 1) {
         x = randomBetween(x1+1, x2-1)  // random needs to be random
-        let i=0
-        while (tiles[x + (y1-1)*GRIDSIZE].available == true || tiles[x + (y2+1)*GRIDSIZE].available == true) {
+        let i=1
+        while (tiles[x + (y1-1)*GRIDSIZE].available || tiles[x + (y2+1)*GRIDSIZE].available) {
             //console.log(`x=${x} cannot be a wall for space x ${x1}:${x2}, y ${y1}:${y2}`)
             i++
-            if(i>x2-x1){break}
+            if(i>(x2-x1)*2){i=0;break;}
             x = randomBetween(x1+1, x2-1)
           }
         walls.push(x)
-        for (y=y1; y<=y2; y++) {
-          wall(x, y)
+        if (i) {
+          for (y=y1; y<=y2; y++) {
+            wall(x, y)
+          }
         }
-        //door  TODO rework
+        //door
         doorY = randomBetween(y1, y2)
         doorsY.push(doorY)
         door(x, doorY)
@@ -415,17 +417,19 @@ function algoRecursiveMaze(tiles) {
       // horisontal split if dX < dY
       if (y2-y1 >= roomSize && x2-x1 > 1) {
         y = randomBetween(y1+1, y2-1)
-        let i=0
-        while (tiles[x1-1 + y*GRIDSIZE].available == true || tiles[x2+1 + y*GRIDSIZE].available == true) {
+        let i=1
+        while (tiles[x1-1 + y*GRIDSIZE].available || tiles[x2+1 + y*GRIDSIZE].available) {
           //console.log(`y=${y} cannot be a wall for space x ${x1}:${x2}, y ${y1}:${y2}`)
           i++
-          if(i>y2-y1){break} 
+          if(i>(x2-x1)*2){i=0;break} 
           y = randomBetween(y1+1, y2-1)
         }
-        for (x=x1; x<=x2; x++) {
-          wall (x, y)
+        if (i) {
+          for (x=x1; x<=x2; x++) {
+            wall (x, y)
+          }
         }
-        //door  TODO rework
+        //door
         doorX = randomBetween(x1, x2)
         doorsX.push(doorX)
         door(doorX, y)
