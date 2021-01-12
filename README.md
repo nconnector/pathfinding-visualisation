@@ -25,3 +25,5 @@ Quick visualisation tool, demonstrating some maze generating and pathfinding alg
 - More traversal algorithms
 - Mazerunner vs Architect
 - Dynamic nodes
+- Mobile width
+- Mobile fullscreen
