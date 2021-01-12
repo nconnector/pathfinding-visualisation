@@ -1,5 +1,5 @@
 let GRIDSIZE = 41 //odd only
-let DELAY = 40/GRIDSIZE
+let DELAY = 40/GRIDSIZE // change these to variables as they are no longer constant
 let TILESIZE = 60/GRIDSIZE
 
 let gridPopulated = false;
@@ -12,9 +12,20 @@ out.textContent="hello";
 let html = document.documentElement
 let grid = document.getElementById('the-grid');
 let gridContainer = document.getElementById('column-container');
-let gridItems = []
+let gridItems = null
 
 let selectedTileCoords = null
+
+
+// resize grid
+function gridResize(newSize) {
+  GRIDSIZE = newSize
+  DELAY = 40/GRIDSIZE
+  TILESIZE = 60/GRIDSIZE
+  while (grid.firstChild) {grid.removeChild(grid.lastChild)}
+  clearTimeouts()
+  populate()
+}
 
 
 // create new tile
@@ -32,26 +43,29 @@ function addNewTile(element, delay, x, y) {
 
 // populate initial grid
 function populate() {
+  gridItems = []
+  grid.style.backgroundColor = null
   let gridStyle = `repeat(${GRIDSIZE}, ${TILESIZE}vmin)`
   grid.style.gridTemplateRows = gridStyle
   grid.style.gridTemplateColumns = gridStyle
   gridContainer.style.maxWidth = `calc(60vmin + 40px + ${GRIDSIZE-1}px)`
   for (i=0; i<Math.pow(GRIDSIZE, 2); i++) {
-    totalDelay += DELAY
+    if (GRIDSIZE<=50) {totalDelay += DELAY} else {totalDelay += 0}
     addNewTile(grid, totalDelay, x=i%GRIDSIZE, y=Math.floor(i/GRIDSIZE))
   }
   timeouts.push(setTimeout(function() {
     gridPopulated = true
     // set listeners for clicks on the Grid, passing X,Y of clicked tiles
-    html.addEventListener('mousedown', event => {
+    html.addEventListener('mouseover', event => {
       if (event.target.getAttribute('data-tile')) {
         let x = event.target.getAttribute('data-x')
         let y = event.target.getAttribute('data-y')
-        out.textContent = `grabbed x:${x}, y:${y}`
+        out.textContent = `x:${x}, y:${y}`
         selectedTileCoords = [x,y]
       }})
     html.addEventListener('mouseup', event => {
       if (event.target.getAttribute('data-tile')) {
+        console.log('mouseUp')
         let x = event.target.getAttribute('data-x')
         let y = event.target.getAttribute('data-y')
         out.textContent = `moved from ${selectedTileCoords} to ${x},${y}`
@@ -144,7 +158,6 @@ function algoRandom() {
 
 // #2 A* algorithm
 function algoAStar(mode=null, percentage=null) {
-  console.log(`algoAStar with mode ${mode} and percentage ${percentage}`)
   let pathFound = false
   let SMALLDELAY = 300/GRIDSIZE
   let BIGDELAY = 1000/GRIDSIZE
@@ -157,8 +170,9 @@ function algoAStar(mode=null, percentage=null) {
   }
 
   //obstacles
-  if (mode=='maze') {tiles = algoBinaryTreeMaze(tiles)} 
-  else if (mode=='dots') {tiles = algoRandomDots(tiles, percentage)}
+  if (mode=='dots') {tiles = algoRandomDots(tiles, percentage)}
+  else if (mode=='mazeBinaryTree') {tiles = algoBinaryTreeMaze(tiles)}
+  else if (mode=='mazeRecursive') {tiles = algoRecursiveMaze(tiles)} 
 
   //generate start and end points
   let startX = tileRandom()
@@ -208,7 +222,9 @@ function algoAStar(mode=null, percentage=null) {
   function calcNeihgbours(x, y) {
     stepCount++
     totalDelay += SMALLDELAY
-    step(x, y, "", "selected", totalDelay)
+    if (!(x == startX && y == startY)) {
+      step(x, y, "", "selected", totalDelay)
+    }
     tiles[x + y*GRIDSIZE].available = false
     
     //get neighbours
@@ -337,6 +353,96 @@ function algoBinaryTreeMaze(tiles){
   return tiles
 }
 
+// 3. Recursive Division Maze
+function algoRecursiveMaze(tiles) {
+  let SMALLDELAY = 800/GRIDSIZE
+  let roomSize = 3
+  let rooms = [[1, GRIDSIZE-2, 1, GRIDSIZE-2]]
+  let doorsX = [Array(GRIDSIZE-1).keys()]
+  let doorsY = []
+  let walls = [] // delete
+  function randomBetween(x, y) {
+    // returns random integer between x and y, inclusively
+    return Math.floor(Math.random()*(y+1-x)+x)
+  }
+  function wall(x,y) {
+    totalDelay += SMALLDELAY
+    tiles[x + y*GRIDSIZE].available = false
+    step(x, y, "", "wall", totalDelay)
+  }
+  function door(x,y) {
+    totalDelay += SMALLDELAY
+    tiles[x + y*GRIDSIZE].available = true
+    step(x, y, "", "default", totalDelay)
+  }
+  // create surrounding walls
+  for (x=0; x<GRIDSIZE; x++) {y = 0; wall(x, y)}
+  for (y=0; y<GRIDSIZE; y++) {x = GRIDSIZE-1; wall(x, y)}
+  for (x=GRIDSIZE-1; x>=0; x--) {y = GRIDSIZE-1; wall(x, y)}
+  for (y=GRIDSIZE-1; y>=0; y--) {x = 0; wall(x, y)}
+  // divide (true:vertically, false: horisontally)
+
+  function split(room) {
+    let x1 = room[0]
+    let x2 = room[1]
+    let y1 = room[2]
+    let y2 = room[3]
+    //if (x2-x1 > y2-y1) {
+    if (x2-x1 >= y2-y1) {
+      // vertical split if dX > dY
+      if (x2-x1 >= roomSize && y2-y1 > 1) {
+        x = randomBetween(x1+1, x2-1)  // random needs to be random
+        let i=0
+        while (tiles[x + (y1-1)*GRIDSIZE].available == true || tiles[x + (y2+1)*GRIDSIZE].available == true) {
+            //console.log(`x=${x} cannot be a wall for space x ${x1}:${x2}, y ${y1}:${y2}`)
+            i++
+            if(i>x2-x1){break}
+            x = randomBetween(x1+1, x2-1)
+          }
+        walls.push(x)
+        for (y=y1; y<=y2; y++) {
+          wall(x, y)
+        }
+        //door  TODO rework
+        doorY = randomBetween(y1, y2)
+        doorsY.push(doorY)
+        door(x, doorY)
+        //next split
+        rooms.push([x1, x-1, y1, y2])
+        rooms.push([x+1, x2, y1, y2])
+      }
+    } else {
+      // horisontal split if dX < dY
+      if (y2-y1 >= roomSize && x2-x1 > 1) {
+        y = randomBetween(y1+1, y2-1)
+        let i=0
+        while (tiles[x1-1 + y*GRIDSIZE].available == true || tiles[x2+1 + y*GRIDSIZE].available == true) {
+          //console.log(`y=${y} cannot be a wall for space x ${x1}:${x2}, y ${y1}:${y2}`)
+          i++
+          if(i>y2-y1){break} 
+          y = randomBetween(y1+1, y2-1)
+        }
+        for (x=x1; x<=x2; x++) {
+          wall (x, y)
+        }
+        //door  TODO rework
+        doorX = randomBetween(x1, x2)
+        doorsX.push(doorX)
+        door(doorX, y)
+        //next split
+        rooms.push([x1, x2, y1, y-1])
+        rooms.push([x1, x2, y+1, y2])
+      }
+    }
+      return true    
+  }
+  while (rooms.length > 0) {
+    room = rooms.pop()
+    split(room)
+  }
+  return tiles
+}
+
 
 
 // START BUTTONS
@@ -364,11 +470,18 @@ startButtonAlgoAStarDots.onclick = function() {
     algoAStar(mode='dots', percentage=30)
   }
 }
-let startButtonAlgoAStarMaze = document.getElementById("startButtonAlgoAStarMaze")
-startButtonAlgoAStarMaze.onclick = function() {
+let startButtonAlgoAStarMazeBinary = document.getElementById("startButtonAlgoAStarMazeBinary")
+startButtonAlgoAStarMazeBinary.onclick = function() {
   if (gridPopulated) {
     clearAll()
-    algoAStar(mode='maze')
+    algoAStar(mode='mazeBinaryTree')
+  }
+}
+let startButtonAlgoAStarMazeRecursive = document.getElementById("startButtonAlgoAStarMazeRecursive")
+startButtonAlgoAStarMazeRecursive.onclick = function() {
+  if (gridPopulated) {
+    clearAll()
+    algoAStar(mode='mazeRecursive')
   }
 }
 

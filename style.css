@@ -4,6 +4,7 @@ html {
   font-family: "Open Sans", sans-serif;
   width: 100%;
   height: 100vh;
+  font-size: 13px;
 }
 
 .column-block {
@@ -48,13 +49,24 @@ h2 {
   font-size: 20px;
 }
 
+/* to display tile values
+.default,
+.selected,
+.selected2,
+.start,
+.end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}*/
+
 .default {
   background-color: whitesmoke;
 }
 
 .selected {
   background-color: orange;
-  color: rgba(107, 107, 255, 1);
 }
 
 .selected2 {
@@ -70,7 +82,6 @@ h2 {
 }
 
 .end {
-  /*background-color: rgba(250, 124, 124, 0.459);*/
   background-color: rgba(107, 107, 255, 1);
 }
 
@@ -94,4 +105,36 @@ h2 {
 * {
   box-sizing: border-box;
   /*outline: thin dashed green; /* just so you can see the box */
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 1vmin;
+  background: rgb(214, 214, 214);
+  outline: none;
+  opacity: 1;
+  -webkit-transition: 0.2s;
+  transition: background-color 0.2s;
+  margin: 1.5vmin 0 1.5vmin 0;
+}
+
+.slider:hover {
+  background: whitesmoke;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2vmin;
+  height: 2vmin;
+  background: rgba(107, 107, 255, 1);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 2vmin;
+  height: 2vmin;
+  background: rgba(107, 107, 255, 1);
+  cursor: pointer;
 }

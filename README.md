@@ -8,10 +8,20 @@
 - ✅ Grid traversal
 - ✅ A\* traversal
 - ✅ Binary Tree maze
-- ❎ Eller's Algorithm maze
-- ❎ Dynamic nodes UI
-- ❎ Dynamic grid UI
+- ✅ Recursive Division maze
+- ✅ Dynamic grid UI
 
 ### About
 
 Quick visualisation tool, demonstrating some maze generating and pathfinding algorithms in action. Written in vanilla JavaScript as an exercise.
+
+### To Do
+
+- ✓ Dynamic grid size
+- Dynamic generation\traversal speeds
+- Separate maze generation and pathfinding
+- No path handling
+- ✓ Slow down maze generation
+- More traversal algorithms
+- Mazerunner vs Architect
+- Dynamic nodes
