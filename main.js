@@ -37,7 +37,7 @@ function addNewTile(element, delay, x, y) {
     newTile.setAttribute('data-y', y)
     newTile.setAttribute('data-tile', true)
     newTile.setAttribute('dragable', true)
-    element.appendChild(newTile.cloneNode());
+    element.appendChild(newTile);
   }, delay))
 }
 
@@ -49,10 +49,20 @@ function populate() {
   grid.style.gridTemplateRows = gridStyle
   grid.style.gridTemplateColumns = gridStyle
   gridContainer.style.maxWidth = `calc(60vmin + 40px + ${GRIDSIZE-1}px)`
-  for (i=0; i<Math.pow(GRIDSIZE, 2); i++) {
-    if (GRIDSIZE<=50) {totalDelay += DELAY} else {totalDelay += 0}
-    addNewTile(grid, totalDelay, x=i%GRIDSIZE, y=Math.floor(i/GRIDSIZE))
+
+  // optimised population row by row
+  // todo: load 2 rows per fragment for very large maps
+  for (y=0; y<GRIDSIZE; y++) {
+    let fragment = document.createDocumentFragment()
+    totalDelay += DELAY*GRIDSIZE/2
+    for (x=0; x<GRIDSIZE; x++) {
+      addNewTile(fragment, totalDelay, x=x, y=y)
+    }
+    timeouts.push(setTimeout(function() {
+      grid.appendChild(fragment)}, totalDelay
+    ))
   }
+  
   timeouts.push(setTimeout(function() {
     gridPopulated = true
     // set listeners for clicks on the Grid, passing X,Y of clicked tiles
@@ -75,7 +85,7 @@ function populate() {
         selectedTileCoords = null
       }})
 
-    grid.style.backgroundColor = "rgba(245, 245, 245, 0.5)"
+    grid.style.backgroundColor = "rgb(174 174 255)"
   }, totalDelay))
   gridItems = grid.children
 };
@@ -354,6 +364,7 @@ function algoBinaryTreeMaze(tiles){
 }
 
 // 3. Recursive Division Maze
+// todo: walls&doors only on odd tiles 
 function algoRecursiveMaze(tiles) {
   let SMALLDELAY = 400/GRIDSIZE
   let roomSize = 3
@@ -391,10 +402,9 @@ function algoRecursiveMaze(tiles) {
     if (x2-x1 >= y2-y1) {
       // vertical split if dX > dY
       if (x2-x1 >= roomSize && y2-y1 > 1) {
-        x = randomBetween(x1+1, x2-1)  // random needs to be random
+        x = randomBetween(x1+1, x2-1)
         let i=1
         while (tiles[x + (y1-1)*GRIDSIZE].available || tiles[x + (y2+1)*GRIDSIZE].available) {
-            //console.log(`x=${x} cannot be a wall for space x ${x1}:${x2}, y ${y1}:${y2}`)
             i++
             if(i>(x2-x1)*2){i=0;break;}
             x = randomBetween(x1+1, x2-1)
@@ -419,7 +429,6 @@ function algoRecursiveMaze(tiles) {
         y = randomBetween(y1+1, y2-1)
         let i=1
         while (tiles[x1-1 + y*GRIDSIZE].available || tiles[x2+1 + y*GRIDSIZE].available) {
-          //console.log(`y=${y} cannot be a wall for space x ${x1}:${x2}, y ${y1}:${y2}`)
           i++
           if(i>(x2-x1)*2){i=0;break} 
           y = randomBetween(y1+1, y2-1)
@@ -437,8 +446,7 @@ function algoRecursiveMaze(tiles) {
         rooms.push([x1, x2, y1, y-1])
         rooms.push([x1, x2, y+1, y2])
       }
-    }
-      return true    
+    }   
   }
   while (rooms.length > 0) {
     room = rooms.pop()
@@ -449,10 +457,10 @@ function algoRecursiveMaze(tiles) {
 
 
 
-// START BUTTONS
+// UI - START BUTTONS
 
 
-// TODO: compress this section (switch?)
+// TODO: refactor this section
 let startButtonAlgoRandom = document.getElementById("startButtonAlgoRandom")
 startButtonAlgoRandom.onclick = function() {
   if (gridPopulated) {

@@ -22,8 +22,11 @@ Quick visualisation tool, demonstrating some maze generating and pathfinding alg
 - Separate maze generation and pathfinding
 - No path handling
 - ✓ Slow down maze generation
+- ✓ Fragmented map generation (faster loading on large maps)
 - More traversal algorithms
 - Mazerunner vs Architect
 - Dynamic nodes
 - Mobile width
 - Mobile fullscreen
+- Mobile borders - color
+- Optimise & Refactor
