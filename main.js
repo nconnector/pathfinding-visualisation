@@ -309,8 +309,9 @@ function algoRandomDots(tiles, percentage) {
 }
   
 // 2. Binary Tree Maze
+// display in rows?
 function algoBinaryTreeMaze(tiles){
-  let SMALLDELAY = 75/GRIDSIZE
+  let DELAY = 40/GRIDSIZE
   function isAvailable(x, y, down){
     // directions are false:left true:down
     if (down) {
@@ -331,7 +332,7 @@ function algoBinaryTreeMaze(tiles){
   // traverse
   for (y=1; y<GRIDSIZE-1; y+=2) {
     for (x=1; x<GRIDSIZE-1; x+=2) {
-      totalDelay += SMALLDELAY
+      totalDelay += DELAY
       step(x, y, "", "default", totalDelay)
       // decide whether to go down or left
       let down = Boolean(Math.round(Math.random()))
@@ -339,7 +340,7 @@ function algoBinaryTreeMaze(tiles){
       if (!isAvailable(x,y,down)) {down = !down}
       if (isAvailable(x,y,down)) {
         //step
-        totalDelay += SMALLDELAY
+        totalDelay += DELAY
         if (down) {
           console.log(`${x},${y+1} is available`)
           console.log(`${x},${y+2} is available`)
