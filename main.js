@@ -1,13 +1,13 @@
 let GRIDSIZE = 41 //odd only
 let DELAY = 40/GRIDSIZE // change these to variables as they are no longer constant
-let TILESIZE = 60/GRIDSIZE
+let TILESIZE = `calc(${60/GRIDSIZE}vmin + 1px)`
 
 let gridPopulated = false;
 let timeouts = [];
 let totalDelay = 0
 
 let out = document.getElementById('output');
-out.textContent="hello";
+out.textContent="Welcome to pathfinder";
 
 let html = document.documentElement
 let grid = document.getElementById('the-grid');
@@ -19,9 +19,10 @@ let selectedTileCoords = null
 
 // resize grid
 function gridResize(newSize) {
+  gridPopulated = false
   GRIDSIZE = newSize
   DELAY = 40/GRIDSIZE
-  TILESIZE = 60/GRIDSIZE
+  TILESIZE = `calc(${60/GRIDSIZE}vmin + 1px)`
   while (grid.firstChild) {grid.removeChild(grid.lastChild)}
   clearTimeouts()
   populate()
@@ -45,7 +46,7 @@ function addNewTile(element, delay, x, y) {
 function populate() {
   gridItems = []
   grid.style.backgroundColor = null
-  let gridStyle = `repeat(${GRIDSIZE}, ${TILESIZE}vmin)`
+  let gridStyle = `repeat(${GRIDSIZE}, ${TILESIZE})`
   grid.style.gridTemplateRows = gridStyle
   grid.style.gridTemplateColumns = gridStyle
   gridContainer.style.maxWidth = `calc(60vmin + 40px + ${GRIDSIZE-1}px)`
@@ -85,7 +86,6 @@ function populate() {
         selectedTileCoords = null
       }})
 
-    grid.style.backgroundColor = "rgb(174 174 255)"
   }, totalDelay))
   gridItems = grid.children
 };
@@ -124,8 +124,10 @@ function clearTimeouts() {
   totalDelay = 0
 }
 function clearAll() {
+  let timeStart = 'now'
   clearTimeouts()
   clearGrid()
+  //totalDelay += 'now'-timeStart
 }
 
 
