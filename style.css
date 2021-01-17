@@ -62,35 +62,46 @@ h2 {
 }*/
 
 .default {
-  background-color: whitesmoke;
+  background-color: rgb(245, 245, 245);
+  border-color: rgb(228, 228, 228) !important;
 }
 
 .selected {
-  background-color: orange;
+  background-color: rgb(255, 166, 0);
+  border-color: rgb(236, 154, 0) !important;
 }
 
 .selected2 {
   background-color: rgb(252, 222, 166);
+  border-color: rgb(226, 200, 151) !important;
 }
 
 .wall {
   background-color: rgb(185, 185, 185);
+  border-color: rgb(171, 171, 171) !important;
 }
 
 .start {
-  background-color: rgba(107, 107, 255, 1);
+  background-color: rgb(107, 107, 255);
+  border-color: rgb(99, 99, 232) !important;
 }
 
 .end {
-  background-color: rgba(107, 107, 255, 1);
+  background-color: rgb(107, 107, 255);
+  border-color: rgb(93, 93, 222) !important;
 }
 
 #the-grid {
   margin: auto;
   display: grid;
-  grid-gap: 1px;
+  grid-gap: 0px;
   grid-template-columns: repeat(40, 1.5vmin);
   grid-template-rows: repeat(40, 1.5vmin);
+}
+
+#the-grid > div {
+  border-bottom: 1px solid rgb(0, 0, 0);
+  border-right: 1px solid rgb(0, 0, 0);
 }
 
 #column-container {

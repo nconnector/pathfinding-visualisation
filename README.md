@@ -30,3 +30,4 @@ Quick visualisation tool, demonstrating some maze generating and pathfinding alg
 - Mobile fullscreen
 - Mobile borders - color
 - Optimise & Refactor
+- Adjust delay for clear() functions
